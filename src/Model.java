@@ -71,7 +71,7 @@ public class Model {
 	 * @return Parsed models
 	 */
 	public static List<Model> parseModels(String str)  {
-		String[] models = str.split("|");
+		String[] models = str.split("\\|");
 		List<Model> result = new ArrayList<Model>();
 		for (int i = 0; i < models.length; i++)  {
 			String[] modelAndSubmodel = models[i].split(",");

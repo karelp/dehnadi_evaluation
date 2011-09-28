@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -39,11 +38,22 @@ public class EvaluationMain {
 		}
 	}
 	
+	/**
+	 * Open {@link Workbook} on selected path (if possible)
+	 * @param filePath String path of workbook
+	 * @return {@link Workbook} instance
+	 * @throws IOException
+	 */
 	private Workbook openWorkbook(String filePath) throws IOException {
 		InputStream is = new FileInputStream(new File(filePath));
 		return new XSSFWorkbook(is); 
 	}
-
+	
+	/**
+	 * Loads answers from selected {@link Workbook} instance
+	 * @param workbook {@link Workbook} instance
+	 * @return {@link List} of {@link Question} instances
+	 */
 	private List<Question> loadQuestions(Workbook workbook) {
 		List<Question> questions = new ArrayList<Question>();
 		List<ModelsAndAnswer> answers = null;
