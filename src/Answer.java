@@ -84,7 +84,7 @@ public class Answer {
 			case 3:  {
 				int a = Integer.valueOf(answerNumbers[0]);
 				int b = Integer.valueOf(answerNumbers[1]);
-				int c = Integer.valueOf(answerNumbers[1]);
+				int c = Integer.valueOf(answerNumbers[2]);
 				answers.add(new AnswerField(a, b, c));				
 			} break;
 			

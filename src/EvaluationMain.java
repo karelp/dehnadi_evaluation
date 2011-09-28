@@ -50,7 +50,9 @@ public class EvaluationMain {
 	 */
 	private Workbook openWorkbook(String filePath) throws IOException {
 		InputStream is = new FileInputStream(new File(filePath));
-		return new XSSFWorkbook(is); 
+		Workbook workbook = new XSSFWorkbook(is);
+		is.close();
+		return workbook;
 	}
 	
 	/**
