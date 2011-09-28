@@ -126,4 +126,18 @@ public class Answer {
 	public void setQuestionId(int id)  {
 		questionId = id;
 	}
+
+	/**
+	 * @return This multichoice answer split to individual choices as an answer
+	 */
+	public List<Answer> getSubAnswers() {
+		List<Answer> res = new ArrayList<Answer>();
+		for (AnswerField af : answers)  {
+			Answer newA = new Answer("", questionId);
+			newA.answers.add(af);
+			res.add(newA);
+		}
+		
+		return res;
+	}
 }

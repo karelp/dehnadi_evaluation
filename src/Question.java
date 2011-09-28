@@ -52,24 +52,40 @@ public class Question {
 		return id;
 	}
 	
+	private List<Model> modelsForSingleAnswer(Answer answer)  {
+		List<Model> result = new ArrayList<Model>();
+		
+		for (ModelsAndAnswer m : answerModels)  {
+			if (m.answer.equals(answer))  {
+				if (result != null)
+					System.out.println("Warning: duplicate answer for question " + id);
+				result = m.models;
+			}
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * Returns list of models that correspond to the given answer.
 	 * @param answer The student answer
 	 * @return Corresponding models or an empty list if no models match the answer
 	 */
 	public List<Model> modelsForAnswer(Answer answer)  {
-		List<Model> result = new ArrayList<Model>();
-		
+	
 		if (answer.getQuestionId() != id)  {
 			System.out.println("Warning: the given answer with id=" + answer.getQuestionId() + " does not match the question id " + id);
 			return null;
 		}
 			
-		for (ModelsAndAnswer m : answerModels)  {
-			if (m.answer.equals(answer))  {
-				if (result != null)
-					System.out.println("Warning: duplicate answer for question " + id);
-				result = m.models;
+		List<Model> result = modelsForSingleAnswer(answer);
+		
+		// No model found, split the multi choice answer to a list of simple answers
+		// and assign them the models
+		if (result.size() == 0)  {
+			List<Answer> subAnswers = answer.getSubAnswers();
+			for (Answer a : subAnswers)  {
+				result.addAll(modelsForSingleAnswer(a));
 			}
 		}
 		
