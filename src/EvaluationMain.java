@@ -3,6 +3,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -36,7 +38,7 @@ public class EvaluationMain {
 	public EvaluationMain() {
 		try {
 			Workbook workbook = openWorkbook(FILE_NAME);
-			resolveAnswers(workbook, loadQuestions(workbook));
+			System.out.println(Arrays.toString(resolveAnswersAndCountEvaluation(workbook, loadQuestions(workbook))));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -96,7 +98,7 @@ public class EvaluationMain {
 		return questions;
 	}
 	
-	private int[] resolveAnswers(Workbook workbook, List<Question> questions) {
+	private int[] resolveAnswersAndCountEvaluation(Workbook workbook, List<Question> questions) {
 		Sheet resultsSheet = workbook.getSheet(RESULTS_SHEET_NAME);
 		Row firstRow = resultsSheet.getRow(0);
 		if(!firstRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().startsWith(RESULT_CORNER_STRING)) {
