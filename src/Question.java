@@ -37,13 +37,18 @@ public class Question {
 		List<Model> result = new ArrayList<Model>();
 		
 		Answer currentAnswer = null;
+		int currentIndex = 0;
+		int i = 0;
 		for (ModelsAndAnswer m : answerModels)  {
 			if (m.answer.equals(answer))  {
-				if (currentAnswer != null)
-					System.out.println("Warning: duplicate answer for question " + id + ". \nAnswer: " + m.answer.toString() + "Model 1: " + result.toString() + ", model 2: " + m.models.toString());
+				if (currentAnswer != null)  {
+					System.out.println("Warning: duplicate answer for question " + id + ". Index 1: " + i + ", index 2: " + currentIndex + ".\nAnswer: " + m.answer.toString() + "Model 1: " + result.toString() + ", model 2: " + m.models.toString());
+				}
 				currentAnswer = m.answer;
+				currentIndex = i;
 				result = m.models;
 			}
+			i++;
 		}
 		
 		return result;
