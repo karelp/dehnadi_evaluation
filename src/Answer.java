@@ -63,20 +63,20 @@ public class Answer {
 		this.questionId = 0;
 		
 		// Parse answer in the format a1,b1,c1|a2,b2,c2|...
-		String[] multipleChoices = input.split("|");
+		String[] multipleChoices = input.split("\\|");
 		for (int i = 0; i < multipleChoices.length; i++)  {
 			String[] answerNumbers = multipleChoices[i].split(",");
 			switch (answerNumbers.length)  {
 			case 2:  {
-				int a = Integer.decode(answerNumbers[0]);
-				int b = Integer.decode(answerNumbers[1]);
+				int a = Integer.valueOf(answerNumbers[0]);
+				int b = Integer.valueOf(answerNumbers[1]);
 				answers.add(new AnswerField(a, b));
 			} break;
 			
 			case 3:  {
-				int a = Integer.decode(answerNumbers[0]);
-				int b = Integer.decode(answerNumbers[1]);
-				int c = Integer.decode(answerNumbers[1]);
+				int a = Integer.valueOf(answerNumbers[0]);
+				int b = Integer.valueOf(answerNumbers[1]);
+				int c = Integer.valueOf(answerNumbers[1]);
 				answers.add(new AnswerField(a, b, c));				
 			} break;
 			
