@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -23,8 +24,11 @@ public class EvaluationMain {
 	private final String FILE_NAME = "data/sample_data.xlsx";
 	private final String SHEET_NAME_REGEXP = "Q\\d*";
 	private final String QUESTION_NUMBER_CHAR = "#";
-	private final int answerIndex = 0;
-	private final int modelIndex = 1;
+	private final int ANSWER_INDEX = 0;
+	private final int MODEL_INDEX = 1;
+	private final String RESULTS_SHEET_NAME = "Results";
+	private final int RESULT_CORNER_INDEX = 0;
+	private final String RESULT_CORNER_STRING = "Code";
 	
 	/**
 	 * Default constructor
@@ -32,7 +36,7 @@ public class EvaluationMain {
 	public EvaluationMain() {
 		try {
 			Workbook workbook = openWorkbook(FILE_NAME);
-			loadQuestions(workbook);			
+			resolveAnswers(workbook, loadQuestions(workbook));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -80,8 +84,8 @@ public class EvaluationMain {
 				tmpQID = Integer.valueOf(tmpString);
 				answers = new ArrayList<ModelsAndAnswer>();
 				for(int j = 1; j < tmpSheet.getPhysicalNumberOfRows(); j++) {
-					tmpAnswers = tmpSheet.getRow(j).getCell(answerIndex).getStringCellValue();
-					tmpModels = tmpSheet.getRow(j).getCell(modelIndex).getStringCellValue();
+					tmpAnswers = tmpSheet.getRow(j).getCell(ANSWER_INDEX).getStringCellValue();
+					tmpModels = tmpSheet.getRow(j).getCell(MODEL_INDEX).getStringCellValue();
 					answers.add(new ModelsAndAnswer(new Answer(tmpAnswers, tmpQID), Model.parseModels(tmpModels)));
 				}
 				questions.add(new Question(tmpQID, answers));
@@ -90,6 +94,55 @@ public class EvaluationMain {
 		return questions;
 	}
 	
+	private int[] resolveAnswers(Workbook workbook, List<Question> questions) {
+		Sheet resultsSheet = workbook.getSheet(RESULTS_SHEET_NAME);
+		Row firstRow = resultsSheet.getRow(0);
+		if(!firstRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().startsWith(RESULT_CORNER_STRING)) {
+			System.out.println("First row of result list does not contain \"" + RESULT_CORNER_STRING + "\" on column num " + RESULT_CORNER_INDEX);
+			return null;
+		}
+		Evaluation evaluation = null;
+		List<Answer> answers = null;
+		int[] evals = new int[firstRow.getPhysicalNumberOfCells() - 1];
+		for(int i = 1; i < firstRow.getPhysicalNumberOfCells(); i++) {
+			evaluation = new Evaluation();
+			answers = getAnswersInColumn(resultsSheet, i, 1);
+			if(answers != null) {
+				evals[i - 1] = evaluation.evaluate(questions, answers);
+			} else {
+				System.out.println("Answers are null!!");
+				return null;
+			}
+		}
+		return evals;
+	}
+	
+	private List<Answer> getAnswersInColumn(Sheet sheet, int columnIdx, int headerOffset) {
+		List<Answer> values = new ArrayList<Answer>(sheet.getPhysicalNumberOfRows());
+		Row tmpRow = null;
+		Cell tmpCell = null;
+		String tmpString = null;
+		int tmpUID = 0;
+		for(int i = headerOffset; i < sheet.getPhysicalNumberOfRows(); i++) {
+			tmpRow = sheet.getRow(i);
+			if(tmpRow == null) continue;
+			if(tmpRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().isEmpty()) break;
+			if(!tmpRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().startsWith(QUESTION_NUMBER_CHAR)) {
+				System.out.println("Unrecognizable question number on line " + tmpRow.getRowNum());
+				return null;
+			}
+			tmpCell = tmpRow.getCell(columnIdx);
+			tmpString = tmpRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().replace(QUESTION_NUMBER_CHAR, "");
+			tmpUID = Integer.valueOf(tmpString);
+			if(tmpCell == null) {
+				values.add(new Answer("", tmpUID));
+			} else {
+				values.add(new Answer(tmpRow.getCell(columnIdx).getStringCellValue(), tmpUID));
+			}
+		}
+		return values;
+	}
+
 	/**
 	 * @param args String
 	 */
