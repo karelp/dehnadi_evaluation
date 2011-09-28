@@ -60,7 +60,7 @@ public class Answer {
 	 * @param questionId ID of the question this answer belongs to
 	 */
 	public Answer(String input, int questionId)  {
-		this.questionId = 0;
+		this.questionId = questionId;
 		
 		// Parse answer in the format a1,b1,c1|a2,b2,c2|...
 		String[] multipleChoices = input.split("\\|");

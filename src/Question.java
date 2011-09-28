@@ -19,6 +19,7 @@ public class Question {
 	 * @param answerModels Models for correct answers
 	 */
 	public Question(int id, List<ModelsAndAnswer> answerModels)  {
+		this.id = id;
 		this.answerModels = answerModels;
 		for (ModelsAndAnswer ma : answerModels)
 			ma.answer.setQuestionId(id);
