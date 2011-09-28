@@ -18,4 +18,11 @@ public class ModelsAndAnswer  {
 		this.answer = answer;
 		this.models = models;
 	}
+
+	@Override
+	public String toString() {
+		return "ModelsAndAnswer [answer=" + answer + ", models=" + models + "]";
+	}
+	
+	
 }

@@ -40,7 +40,7 @@ public class Question {
 		for (ModelsAndAnswer m : answerModels)  {
 			if (m.answer.equals(answer))  {
 				if (currentAnswer != null)
-					System.out.println("Warning: duplicate answer for question " + id + ". \nAnswer: " + m.answer.toString());
+					System.out.println("Warning: duplicate answer for question " + id + ". \nAnswer: " + m.answer.toString() + "Model 1: " + result.toString() + ", model 2: " + m.models.toString());
 				currentAnswer = m.answer;
 				result = m.models;
 			}
@@ -74,4 +74,10 @@ public class Question {
 		
 		return result;
 	}
+
+	@Override
+	public String toString() {
+		return "Question [id=" + id + ", answerModels=" + answerModels + "]";
+	}
+	
 }

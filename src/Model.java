@@ -64,6 +64,13 @@ public class Model {
 		this.sub = sub;
 	}
 	
+	@Override
+	public String toString()  {
+		String res = "";
+		res += main + "+" + sub;
+		return res;
+	}
+	
 	/**
 	 * Creates a list of model from a formatted string. The models are separated by pipes, model and
 	 * submodel are separated by a comma.
