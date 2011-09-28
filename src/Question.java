@@ -36,10 +36,12 @@ public class Question {
 	private List<Model> modelsForSingleAnswer(Answer answer)  {
 		List<Model> result = new ArrayList<Model>();
 		
+		Answer currentAnswer = null;
 		for (ModelsAndAnswer m : answerModels)  {
 			if (m.answer.equals(answer))  {
-				if (result != null)
-					System.out.println("Warning: duplicate answer for question " + id);
+				if (currentAnswer != null)
+					System.out.println("Warning: duplicate answer for question " + id + ". \nAnswer: " + m.answer.toString());
+				currentAnswer = m.answer;
 				result = m.models;
 			}
 		}

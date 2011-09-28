@@ -24,6 +24,19 @@ public class Answer {
 		public int getSize() { return variables.size(); }
 		
 		@Override
+		public String toString()  {
+			String res = "";
+			char ch = 'a';
+			for (Integer i : variables)  {
+				res += ch + " = " + i + ", ";
+				ch++;
+			}
+			if (!res.isEmpty())
+				res = res.substring(0, res.length() - 2);
+			return res;
+		}
+		
+		@Override
 		public boolean equals(Object oth)  {
 			if (oth instanceof AnswerField)  {
 				AnswerField o = (AnswerField)oth;
@@ -31,15 +44,7 @@ public class Answer {
 					return false;
 				
 				for (int i = 0; i < getSize(); i++)  {
-					boolean f = false;
-					for (int j = 0; j < getSize(); j++)  {
-						if (variables.get(i).equals(o.variables.get(j)))  {
-							f = true;
-							break;
-						}
-					}
-					
-					if (!f)
+					if (!variables.get(i).equals(o.variables.get(i)))
 						return false;
 				}
 				
@@ -61,6 +66,9 @@ public class Answer {
 	 */
 	public Answer(String input, int questionId)  {
 		this.questionId = questionId;
+		
+		if (input == null || input.equals(""))
+			return;
 		
 		// Parse answer in the format a1,b1,c1|a2,b2,c2|...
 		String[] multipleChoices = input.split("\\|");
@@ -96,13 +104,30 @@ public class Answer {
 			if (a.answers.size() != answers.size())
 				return false;
 			
-			for (int i = 0; i < answers.size(); i++)
-				if (!a.answers.get(i).equals(answers.get(i)))
+			for (int i = 0; i < answers.size(); i++)  {
+				boolean found = false;
+				for (int j = 0; j < answers.size(); j++)  {
+					if (a.answers.get(i).equals(answers.get(i)))  {
+						found = true;
+						break;
+					}
+				}
+				
+				if (!found)
 					return false;
+			}
 			
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString()  {
+		String res = "";
+		for (AnswerField f : answers)
+			res += f.toString() + "\n";
+		return res;
 	}
 	
 	/**
