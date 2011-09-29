@@ -30,7 +30,7 @@ public class Evaluation {
 		
 	}
 	
-	private void addModelToAccumulator(Model m) {
+	private void addModelToAccumulator(Model m, int[] accum) {
 		if (m.getMain() == Model.MainModel.NoModel)
 			return;
 		
@@ -39,15 +39,21 @@ public class Evaluation {
 		// No specific submodel - increase all submodels
 		if (m.getSub() == Model.SubModel.NoSubmodel)  {
 			for (int i = 0; i < Model.SubModel.values().length - 1; i++)  {
-				accumulator[mainIndex + i]++;
+				accum[mainIndex + i]++;
 			}
 		} else {
 			// Increase only specific submodel
 			int subIndex = m.getSub().ordinal() - 1;
-			accumulator[mainIndex + subIndex]++; 
+			accum[mainIndex + subIndex]++; 
 		}
 	}
 	
+	private void addQuestionAccumulator(int[] questionAccum)  {
+		for (int i = 0; i < questionAccum.length; i++)  {
+			if (questionAccum[i] > 0)
+				accumulator[i]++;
+		}
+	}
 	
 	/**
 	 * Evaluates one student answers
@@ -64,9 +70,11 @@ public class Evaluation {
 				continue;
 			
 			List<Model> models = q.modelsForAnswer(a);
+			int[] questionAccumulator = new int[accumulator.length];
 			for (Model m : models)  {
-				addModelToAccumulator(m);
+				addModelToAccumulator(m, questionAccumulator);
 			}
+			addQuestionAccumulator(questionAccumulator);
 		}
 
 		// Find maximum consistency
