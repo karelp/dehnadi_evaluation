@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,16 +26,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class EvaluationMain {
 
-	private final String FILE_INPUT_NAME = "data/sample_data.xlsx";
-	private final String FILE_OUTPUT_NAME = "data/sample_data_.xlsx";
-	private final String SHEET_NAME_REGEXP = "Q\\d*";
+	private final String FILE_INPUT_NAME = "data/data_c01.xlsx";
+	private final String FILE_OUTPUT_NAME = "data/data_c01_.xlsx";
+	private final String QUESTION_SHEET_NAME_REGEXP = "Q\\d*";
 	private final String QUESTION_NUMBER_CHAR = "#";
 	private final int ANSWER_INDEX = 0;
 	private final int MODEL_INDEX = 1;
-	private final String RESULTS_SHEET_NAME = "Results";
 	private final int RESULT_CORNER_INDEX = 0;
 	private final String RESULT_CORNER_STRING = "Code";
 	private final String RESULT_CELL_STRING = "Results";
+	private final String RESULT_SHEET_NAME_REGEXP = "Results.*";
 	
 	private CellStyle[] cellStyles = new CellStyle[2];
 	
@@ -44,9 +45,19 @@ public class EvaluationMain {
 	public EvaluationMain() {
 		try {
 			Workbook workbook = openWorkbook(FILE_INPUT_NAME);
-			int[] evals = resolveAnswersAndCountEvaluation(workbook, loadQuestions(workbook));
 			createCellStyles(workbook);
-			writeEvalsToFile(FILE_OUTPUT_NAME, workbook, evals);
+			
+			Sheet tmpSheet = null;
+			int[] evals = null;
+			for(int i = 0; i < workbook.getNumberOfSheets(); i++) {
+				tmpSheet = workbook.getSheetAt(i);
+				if(tmpSheet.getSheetName().matches(RESULT_SHEET_NAME_REGEXP)) {
+					evals = resolveAnswersAndCountEvaluation(tmpSheet, loadQuestions(workbook)); 
+					writeEvalsToFile(tmpSheet, evals);
+					System.out.println("Sheet '" + tmpSheet.getSheetName() + "' calculated");
+				}
+			}
+			writeWorkbookToFile(FILE_OUTPUT_NAME, workbook);
 			System.out.println("Done!");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -82,7 +93,7 @@ public class EvaluationMain {
 		int tmpQID = 0;
 		for(int i = 0; i < workbook.getNumberOfSheets(); i++) {
 			tmpSheet = workbook.getSheetAt(i);
-			if(tmpSheet.getSheetName().matches(SHEET_NAME_REGEXP)) {
+			if(tmpSheet.getSheetName().matches(QUESTION_SHEET_NAME_REGEXP)) {
 				tmpRow = tmpSheet.getRow(0);
 				if(tmpRow == null) {
 					System.out.println("Sheet " + tmpSheet.getSheetName() + " does not have 0th row");
@@ -107,8 +118,8 @@ public class EvaluationMain {
 		return questions;
 	}
 	
-	private int[] resolveAnswersAndCountEvaluation(Workbook workbook, List<Question> questions) {
-		Sheet resultsSheet = workbook.getSheet(RESULTS_SHEET_NAME);
+	private int[] resolveAnswersAndCountEvaluation(Sheet resultsSheet, List<Question> questions) {
+//		Sheet resultsSheet = workbook.getSheet(RESULTS_SHEET_NAME);
 		Row firstRow = resultsSheet.getRow(0);
 		if(!firstRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().startsWith(RESULT_CORNER_STRING)) {
 			System.out.println("First row of result list does not contain \"" + RESULT_CORNER_STRING + "\" on column num " + RESULT_CORNER_INDEX);
@@ -139,12 +150,8 @@ public class EvaluationMain {
 		for(int i = headerOffset; i < sheet.getPhysicalNumberOfRows(); i++) {
 			tmpRow = sheet.getRow(i);
 			if(tmpRow == null) continue;
-			if(tmpRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().isEmpty()) break;
-			if(tmpRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().startsWith(RESULT_CELL_STRING)) continue;
-			if(!tmpRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().startsWith(QUESTION_NUMBER_CHAR)) {
-				System.out.println("Unrecognizable question number on line " + tmpRow.getRowNum());
-				return null;
-			}
+			if(tmpRow.getCell(RESULT_CORNER_INDEX) == null) continue;
+			if(!tmpRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().startsWith(QUESTION_NUMBER_CHAR)) continue;
 			tmpCell = tmpRow.getCell(columnIdx);
 			tmpString = tmpRow.getCell(RESULT_CORNER_INDEX).getStringCellValue().replace(QUESTION_NUMBER_CHAR, "");
 			tmpUID = Integer.valueOf(tmpString);
@@ -168,8 +175,7 @@ public class EvaluationMain {
 		cellStyles[1].setFont(tmpFont);
 	}
 	
-	private void writeEvalsToFile(String path, Workbook workbook, int[] evals) throws IOException {
-		Sheet resultsSheet = workbook.getSheet(RESULTS_SHEET_NAME);
+	private void writeEvalsToFile(Sheet resultsSheet, int[] evals) throws IOException {
 		int resultRowNum = getResultRowNum(resultsSheet);
 		if(resultRowNum == -1) {
 			System.out.println("Cannot find result row in result sheet!");
@@ -194,6 +200,9 @@ public class EvaluationMain {
 				System.out.println("Warning: student name cell null or empty! cell coord [" + 0 + ", " + i + "]");
 			}
 		}
+	}
+	
+	private void writeWorkbookToFile(String path, Workbook workbook) throws IOException {
 		FileOutputStream os = new FileOutputStream(new File(path));
 		workbook.write(os);
 		os.close();
