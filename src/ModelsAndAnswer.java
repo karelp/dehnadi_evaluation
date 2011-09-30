@@ -6,7 +6,14 @@ import java.util.List;
  * Contains list of models for the given correct answer
  */
 public class ModelsAndAnswer  {
+	/**
+	 * An answer specified by the test creator
+	 */
 	public Answer answer;
+	
+	/**
+	 * Models corresponding to the answer
+	 */
 	public List<Model> models;
 	
 	/**
