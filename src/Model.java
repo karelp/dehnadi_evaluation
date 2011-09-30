@@ -11,6 +11,7 @@ public class Model {
 	 * @author KarelPetranek
 	 * Possible mental models appearing in the test 
 	 */
+	@SuppressWarnings("javadoc")
 	public enum MainModel  {
 		NoModel,
 		M1,
@@ -30,6 +31,7 @@ public class Model {
 	 * @author KarelPetranek
 	 * Mental submodels for the above models
 	 */
+	@SuppressWarnings("javadoc")
 	public enum SubModel  {
 		NoSubmodel,
 		S1,
