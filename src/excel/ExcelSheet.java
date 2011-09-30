@@ -66,7 +66,7 @@ public class ExcelSheet {
 		int lastNonEmptyCell = -1;
 		lastNonEmptyCell = fillRawRow(row, res);
 		
-		res.removeRange(lastNonEmptyCell, res.size());
+		res.removeRange(lastNonEmptyCell + 1, res.size());
 		
 		return res;
 	}

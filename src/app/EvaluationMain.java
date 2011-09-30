@@ -119,7 +119,7 @@ public class EvaluationMain {
 		
 		if(sheet.cellAt(RESULT_CORNER_INDEX, 0).asString().equalsIgnoreCase(RESULT_CORNER_STRING)) {
 			ExcelRow firstRow = sheet.getRow(0);
-			evals = new int[firstRow.size()];
+			evals = new int[firstRow.size() - 1];
 			for(int i = 1; i < firstRow.size(); i++) {
 				evaluation = new Evaluation();
 				answers = getAnswersInColumn(sheet, i);
@@ -140,7 +140,7 @@ public class EvaluationMain {
 	 * @throws NumberFormatException when question number have incorrect format
 	 */
 	private List<Answer> getAnswersInColumn(ExcelSheet sheet, int idx) throws NumberFormatException {
-		ExcelColumn column = sheet.getColumnWithEmptyCells(idx, 1);
+		ExcelColumn column = sheet.getColumnWithEmptyCells(idx);
 		List<Answer> answers = new ArrayList<Answer>(column.size());
 		String tmpCellStr = null;
 		

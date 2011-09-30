@@ -1,4 +1,5 @@
 package model;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -76,6 +77,7 @@ public class Evaluation {
 				addModelToAccumulator(m, questionAccumulator);
 			}
 			addQuestionAccumulator(questionAccumulator);
+			System.out.println(Arrays.toString(questionAccumulator));
 		}
 
 		// Find maximum consistency
