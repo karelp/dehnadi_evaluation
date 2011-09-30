@@ -7,8 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -18,7 +22,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Represents an Excel workbook
  */
 public class ExcelWorkbook {
-	Workbook workbook;
+	private Workbook workbook;
+	private HashMap<String, CellStyle> fontRegister = new HashMap<String, CellStyle>();
 	
 	/**
 	 * Loads an Excel workbook from the given input stream
@@ -38,6 +43,40 @@ public class ExcelWorkbook {
 		InputStream is = new FileInputStream(new File(filePath));
 		workbook = new XSSFWorkbook(is);
 		is.close();
+	}
+	
+	/**
+	 * Creates and register font for current workbook
+	 * @param colorIndex {@link HSSFColor} index
+	 * @param bold boolean flag bold style
+	 * @param italic boolean flag italic style
+	 * @param underline boolean flag underline style
+	 * @param FontID String ID of font
+	 * 
+	 */
+	public void registrFont(short colorIndex, boolean bold, boolean italic, boolean underline, String FontID) {
+		CellStyle style = workbook.createCellStyle();
+		Font font = workbook.createFont();
+		font.setColor(colorIndex);
+		if (bold)
+			font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		if (italic)
+			font.setItalic(true);
+		if (underline)
+			font.setUnderline(Font.U_SINGLE);
+		style.setFont(font);
+		fontRegister.put(FontID, style);
+	}
+	
+	/**
+	 * Return font for selected FontID or null if font with selected FontID is not registered in current workbook
+	 * @param FontID String
+	 * @return {@link CellStyle} instance
+	 * @see #registrFont(short, boolean, boolean, boolean, String)
+	 * @see ExcelCell#setFont(CellStyle font)
+	 */
+	public CellStyle getRegistredFont(String FontID) {
+		return fontRegister.get(FontID);
 	}
 	
 	/**

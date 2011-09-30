@@ -1,9 +1,7 @@
 package excel;
 
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
 
 /**
  * @author KarelPetranek
@@ -97,24 +95,12 @@ public class ExcelCell {
 	
 	/**
 	 * Sets cell font properties
-	 * @param color Font color
-	 * @param bold Specifies if the font should be bold
-	 * @param italic Specifies if the font should be italic
-	 * @param underline Specifies if the font should be underlined
+	 * @param font {@link CellStyle} instance
+	 * @see ExcelWorkbook#registrFont(short, boolean, boolean, boolean, String)
+	 * @see ExcelWorkbook#getRegistredFont(String)
 	 */
-	public void setFont(HSSFColor color, boolean bold, boolean italic, boolean underline)  {
-		// TODO: this creates a new style for each cell (doesn't reuse styles)
-		CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
-		Font font = cell.getSheet().getWorkbook().createFont();
-		font.setColor(color.getIndex());
-		if (bold)
-			font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-		if (italic)
-			font.setItalic(true);
-		if (underline)
-			font.setUnderline(Font.U_SINGLE);
-		style.setFont(font);
-		cell.setCellStyle(style);
+	public void setFont(CellStyle font)  {
+		cell.setCellStyle(font);
 	}
 	
 	/**
