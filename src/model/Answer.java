@@ -139,6 +139,14 @@ public class Answer {
 	}
 	
 	/**
+	 * Gets number of possible choices for this answer
+	 * @return Number of possible choices for this answer
+	 */
+	public int getChoiceCount()  {
+		return answers.size();
+	}
+	
+	/**
 	 * @return ID of the question corresponding to this answer
 	 */
 	public int getQuestionId()  {

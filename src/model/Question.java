@@ -21,9 +21,20 @@ public class Question {
 	 */
 	public Question(int id, List<ModelsAndAnswer> answerModels)  {
 		this.id = id;
-		this.answerModels = answerModels;
+		this.answerModels = new ArrayList<ModelsAndAnswer>(answerModels.size());
 		for (ModelsAndAnswer ma : answerModels)
-			ma.answer.setQuestionId(id);
+			addAnswerModels(ma);
+	}
+	
+	private void addAnswerModels(ModelsAndAnswer ma)  {
+		if (ma.answer.getChoiceCount() < 1)  {
+			System.out.println("Warning: the given reference answer doesn't have any models assigned");
+			return;
+		}
+		
+		ma.answer.setQuestionId(id); // Just to be sure, the caller should've already set this
+		
+		answerModels.add(ma);
 	}
 	
 	/**
