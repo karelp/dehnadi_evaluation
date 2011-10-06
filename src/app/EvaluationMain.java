@@ -184,7 +184,7 @@ public class EvaluationMain {
 	 * @param value evaluation value
 	 */
 	private void applyCellStyle(ExcelWorkbook workbook, ExcelCell tmpCell, int value) {
-		if(value > 8) tmpCell.setFont(workbook.getRegistredFont(FONT_RED));
+		if(value > 7) tmpCell.setFont(workbook.getRegistredFont(FONT_RED));
 		else tmpCell.setFont(workbook.getRegistredFont(FONT_DEFAULT));
 	}
 
