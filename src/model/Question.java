@@ -82,12 +82,14 @@ public class Question {
 		
 		// No model found, split the multi choice answer to a list of simple answers
 		// and assign them the models
-		if (result.size() == 0)  {
+		// NOTE: commented out as it doesn't correspond to evaluation in the paper
+		// The rationale is that it does not make sense to award full score to a student who checks everything.
+		/*if (result.size() == 0)  {
 			List<Answer> subAnswers = answer.getSubAnswers();
 			for (Answer a : subAnswers)  {
 				result.addAll(modelsForSingleAnswer(a));
 			}
-		}
+		}*/
 		
 		return result;
 	}
